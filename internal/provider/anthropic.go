@@ -43,11 +43,11 @@ type anthropicMessage struct {
 }
 
 type anthropicResponse struct {
-	ID      string              `json:"id"`
-	Model   string              `json:"model"`
-	Content []anthropicContent  `json:"content"`
-	Usage   anthropicUsage      `json:"usage"`
-	StopReason string           `json:"stop_reason"`
+	ID         string             `json:"id"`
+	Model      string             `json:"model"`
+	Content    []anthropicContent `json:"content"`
+	Usage      anthropicUsage     `json:"usage"`
+	StopReason string             `json:"stop_reason"`
 }
 
 type anthropicContent struct {
