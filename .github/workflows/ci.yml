@@ -11,3 +11,6 @@ jobs:
     with:
       go-version: "1.22"
       coverage-threshold: 70
+      # -race requires CGO, which is disabled (CGO_ENABLED=0) on this
+      # runner image; drop it from the default test-flags.
+      test-flags: "-timeout 60s"
