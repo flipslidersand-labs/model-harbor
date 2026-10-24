@@ -52,6 +52,13 @@ curl -X POST http://localhost:8080/v1/chat \
 Core routing and auth complete. OPA policy integration in progress.
 コアルーティングと認証は完成。OPA ポリシー統合は実装中。
 
+## CI
+
+- `go test` (coverage threshold 70%) runs via the reusable workflow `flipslidersand-labs/qa-workflows` `go-test.yml` (`.github/workflows/ci.yml`), plus gitleaks.
+  CI は qa-workflows の reusable workflow `go-test.yml` で test(カバレッジ閾値 70%)を実行し、gitleaks も走ります。
+- **Required setting / 必須設定:** the runner is selected by the Actions variable `GATE_RUNNER` (set at org level). Forks must define `GATE_RUNNER` themselves.
+  runner は Actions 変数 `GATE_RUNNER`(org で設定)で選びます。fork では各自 `GATE_RUNNER` を設定してください。
+
 ## License
 
 MIT
