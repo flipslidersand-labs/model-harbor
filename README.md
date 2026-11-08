@@ -8,8 +8,11 @@ OPA ベースのポリシーエンジンを持つ、マルチモデル AI ルー
 
 ## Architecture / アーキテクチャ
 
+目標構成です。現状の実装範囲は [Status](#status--ステータス) を参照してください。
+Target design. See [Status](#status--ステータス) for what is implemented today.
+
 ```
-Client → POST /v1/chat
+Client → POST /v1/chat/completions
               │
        ┌──────▼──────┐
        │   Router     │  task_type + token_count + risk → model selection
@@ -25,12 +28,19 @@ Client → POST /v1/chat
 ## Usage / 使い方
 
 ```bash
-go build ./cmd/modelharbor
+go build -o modelharbor ./cmd/modelharbor
 
-curl -X POST http://localhost:8080/v1/chat \
+# Comma-separated caller keys. If unset, every request is rejected (fail closed).
+# 呼び出し側キー(カンマ区切り)。未設定なら全リクエストを拒否します。
+MODELHARBOR_API_KEYS=<key> ./modelharbor serve --addr :8080
+
+curl -s http://localhost:8080/healthz          # 200
+
+curl -X POST http://localhost:8080/v1/chat/completions \
   -H "Authorization: Bearer <key>" \
   -H "Content-Type: application/json" \
-  -d '{"task_type":"coding","messages":[{"role":"user","content":"Write a binary search in Go"}]}'
+  -d '{"model":"x","messages":[{"role":"user","content":"Write a binary search in Go"}]}'
+# → 501 {"error":{"code":"not_implemented", ...}}  (routing is not wired yet)
 ```
 
 ## Tech Stack / 技術スタック
@@ -44,13 +54,20 @@ curl -X POST http://localhost:8080/v1/chat \
 
 | Method | Path | Description / 説明 |
 |---|---|---|
-| POST | `/v1/chat` | Route a chat request / チャットリクエストをルーティング |
-| GET | `/v1/health` | Health check / ヘルスチェック |
+| POST | `/v1/chat/completions` | Bearer auth required. **Currently returns 501 `not_implemented`** / Bearer 認証必須。現状は 501 を返すスタブ |
+| GET | `/healthz` | Health check / ヘルスチェック |
 
 ## Status / ステータス
 
-Core routing and auth complete. OPA policy integration in progress.
-コアルーティングと認証は完成。OPA ポリシー統合は実装中。
+Early skeleton. 初期の骨組みの段階です。
+
+| Area / 項目 | State / 状態 |
+|---|---|
+| Bearer auth (`MODELHARBOR_API_KEYS`, constant-time, fail closed) | Implemented / 実装済み |
+| `/healthz` | Implemented / 実装済み |
+| `internal/router`, `internal/provider` (Anthropic / OpenAI-compatible) | Implemented as libraries, **not yet wired into the HTTP handler** / ライブラリとして実装済み、HTTP ハンドラには未接続 |
+| `/v1/chat/completions` routing | Stub (501) / スタブ |
+| OPA policy engine | Not started (no OPA dependency yet) / 未着手(依存も未導入) |
 
 ## CI
 
