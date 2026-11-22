@@ -1,5 +1,7 @@
 # model-harbor
 
+Release type: `service`
+
 Multi-model AI routing gateway with OPA-based policy engine (Go).
 Routes LLM requests to the optimal provider (Anthropic Claude / OpenAI-compatible) based on task type, token count, and risk level — enforced by Open Policy Agent rules.
 
